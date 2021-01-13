@@ -61,7 +61,7 @@ public class Translation {
 		
 		//Replacing English words with relevant French words
 		String temp = "";
-		for (int i = 0; i <10000; i++) {
+		for (int i = 0; i <passage.length(); i++) {
 			temp = "";
 			int tempInt = i;
 			while (passage.charAt(i) != ' ') {
@@ -89,7 +89,7 @@ public class Translation {
 		
 		
 		System.out.println("Translated passage:");
-		System.out.println(passage.substring(0,70000));
+		System.out.println(passage);
 		System.out.println("Unique List of words that was replaced with the French word from Dictionary ");
 		System.out.println(uniqueList);
 		System.out.println("Frequency of each word replaced");
