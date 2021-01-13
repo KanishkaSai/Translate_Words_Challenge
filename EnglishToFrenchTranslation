@@ -1,0 +1,101 @@
+package EnglishToFrenchTranslation;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.time.Instant;
+public class Translation {
+
+	public static void main(String[] args) throws IOException {
+		long startTime=Instant.now().toEpochMilli();
+		long beforeUsedMemory=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+		
+		//Converting given text file to String
+		String path = "C:\\Users\\User\\Downloads\\t8.shakespeare (1).txt";
+		BufferedReader reader = new BufferedReader(new FileReader(path));
+		StringBuilder stringBuilder = new StringBuilder();
+		String line = null;
+		String ls = System.getProperty("line.separator");
+		while ((line = reader.readLine()) != null) {
+			stringBuilder.append(line);
+			stringBuilder.append(ls);
+		}
+		stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+		reader.close();
+		String passage = stringBuilder.toString();
+		
+		//Converting file which contains list of words to be replaced with French to ArrayList 
+		String pathFindWords = "C:\\Users\\User\\Downloads\\find_words.txt";
+		BufferedReader reader1 = new BufferedReader(new FileReader(pathFindWords));
+		StringBuilder stringBuilder1 = new StringBuilder();
+		String line1 = null;
+		String ls1 = System.getProperty("line.separator");
+		while ((line1 = reader1.readLine()) != null) {
+			stringBuilder1.append(line1);
+			stringBuilder1.append(ls1);
+		}
+		stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+		reader.close();
+		String wordsList = stringBuilder1.toString();
+		
+		//Converting Dictionary file to HashMap
+		List<String> findWordsList = new ArrayList<String>(Arrays.asList(wordsList.split("\\r?\\n")));
+		String pathCsv = "C:\\Users\\User\\Downloads\\french_dictionary.csv";
+		BufferedReader br = new BufferedReader(new FileReader(pathCsv));
+		String line2 = null;
+		HashMap<String, String> map = new HashMap<String, String>();
+		while ((line2 = br.readLine()) != null) {
+			String str[] = line2.split(",", 2);
+			map.put(str[0], line2.substring(str[0].length() + 1));
+		}
+		
+		//To store Unique List of words
+		List<String> uniqueList=new ArrayList<String>();
+		
+		//To find the frequency of each word replaced
+		HashMap<String,Integer> countFreq=new HashMap<>();
+		
+		//Replacing English words with relevant French words
+		String temp = "";
+		for (int i = 0; i <10000; i++) {
+			temp = "";
+			int tempInt = i;
+			while (passage.charAt(i) != ' ') {
+				temp += passage.charAt(i);
+				i++;
+			}
+			temp = temp.toLowerCase();
+			if (findWordsList.contains(temp)) {
+				uniqueList.add(temp);
+				if(countFreq.containsKey(temp))
+					countFreq.put(temp, countFreq.get(temp)+1);
+				else
+					countFreq.put(temp, 1);
+			passage=passage.replace(passage.substring(tempInt,i), map.get(temp));
+			}
+			}
+		
+		//To find Execution Time 
+		long endTime=Instant.now().toEpochMilli();
+		long timeElapsed=endTime-startTime;
+		
+		//To find Memory taken to process
+		long afterUsedMemory=Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory();
+		long actualMemoryUsed=afterUsedMemory-beforeUsedMemory;
+		
+		
+		System.out.println("Translated passage:");
+		System.out.println(passage.substring(0,70000));
+		System.out.println("Unique List of words that was replaced with the French word from Dictionary ");
+		System.out.println(uniqueList);
+		System.out.println("Frequency of each word replaced");
+		System.out.println(countFreq);
+		System.out.println("Execution time in milliseconds: "+timeElapsed);
+		System.out.println("Memory taken to process in KB: "+actualMemoryUsed);
+	}
+
+}
